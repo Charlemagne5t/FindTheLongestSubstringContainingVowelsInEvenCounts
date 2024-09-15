@@ -1,32 +1,46 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class Solution {
+class Solution {
     public int findTheLongestSubstring(String s) {
-        Map<Character, Integer> map = new HashMap<>();
-        map.put('a', 0);
-        map.put('e', 1);
-        map.put('i', 2);
-        map.put('o', 3);
-        map.put('u', 4);
+        int res = 0;
+        int n = s.length();
+        char[] arr = s.toCharArray();
+
         int mask = 0;
-        Map<Integer, Integer> prefixMask = new HashMap<>();
-        int maxLength = 0;
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            if (map.containsKey(ch)) {
-                int charAsNum = map.get(ch);
-                mask ^= 1 << charAsNum;
+        Map<Integer, int[]> map = new HashMap<>();
+        map.put(0, new int[]{-1, -1});
+        for (int i = 0; i < n; i++) {
+            int ch = -1;
+            if(arr[i] == 'a') {
+                ch = 0;
+            }else if(arr[i]== 'e') {
+                ch = 1;
+            }else if(arr[i] == 'i') {
+                ch = 2;
+            }else if(arr[i] == 'o') {
+                ch = 3;
+            }else if(arr[i] == 'u') {
+                ch = 4;
             }
-            if (mask == 0) {
-                maxLength = i + 1;
-                continue;
+            if(ch != -1) {
+                mask ^= 1 << ch;
             }
-            if (prefixMask.containsKey(mask)) {
-                maxLength = Math.max(maxLength, i - prefixMask.get(mask));
+            int[] ind = map.getOrDefault(mask, new int[]{-2, -1});
+            if(ind[0] == -2) {
+                ind[0] = i;
+                if(mask == 0) {
+                    res = Math.max(res, 1);
+                }
+            }else {
+                ind[1] = i;
+                res = Math.max(res, ind[1] - ind[0]);
             }
-            prefixMask.putIfAbsent(mask, i);
+            map.put(mask, ind);
         }
-        return maxLength;
+
+
+
+        return res;
     }
 }
